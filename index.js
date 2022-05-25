@@ -21,6 +21,7 @@ async function run() {
     try {
         await client.connect()
         const productCollection = client.db("RaceTimeTools").collection("products");
+        const userCollection = client.db("RaceTimeTools").collection("users");
 
         app.get("/products", async (req, res) => {
             const query = {}
@@ -32,6 +33,19 @@ async function run() {
             const id = req.params.id
             const query = ObjectId(id)
             const result = await productCollection.findOne(query)
+            res.send(result)
+        })
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email
+            const filter = { email: email }
+            const user = req.body
+            const options = { upsert: true };
+            const doc = {
+                $set: {
+                    user
+                }
+            }
+            const result = await userCollection.updateOne(filter, doc, options)
             res.send(result)
         })
 
