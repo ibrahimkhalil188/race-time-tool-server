@@ -32,6 +32,23 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+
+        app.patch("/products/:id", async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const quantity = req.body
+            const options = { upsert: true };
+            const doc = {
+                $set: {
+                    quantity: quantity.quantity
+                }
+            }
+            const result = await productCollection.updateOne(filter, doc, options)
+            res.send(result)
+
+        })
+
+
         app.get("/products/:id", async (req, res) => {
             const id = req.params.id
             const query = ObjectId(id)
@@ -44,9 +61,7 @@ async function run() {
             const user = req.body
             const options = { upsert: true };
             const doc = {
-                $set: {
-                    user
-                }
+                $set: user
             }
             const result = await userCollection.updateOne(filter, doc, options)
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
@@ -56,6 +71,13 @@ async function run() {
         app.post("/order", async (req, res) => {
             const order = req.body
             const result = await orderCollection.insertOne(order)
+            res.send(result)
+        })
+
+        app.get("/order/:email", async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await orderCollection.find(query).toArray()
             res.send(result)
         })
 
