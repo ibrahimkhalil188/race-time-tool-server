@@ -68,16 +68,34 @@ async function run() {
             res.send({ result, token })
         })
 
+        app.get("/order/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await orderCollection.findOne(query)
+            res.send(result)
+        })
+
+
+        app.get("/order", async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            console.log(query)
+            const result = await orderCollection.find(query).toArray()
+            res.send(result)
+        })
+
+
         app.post("/order", async (req, res) => {
             const order = req.body
             const result = await orderCollection.insertOne(order)
             res.send(result)
         })
 
-        app.get("/order/:email", async (req, res) => {
-            const email = req.params.email
-            const query = { email: email }
-            const result = await orderCollection.find(query).toArray()
+
+        app.delete("/order/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await orderCollection.deleteOne(query)
             res.send(result)
         })
 
