@@ -4,6 +4,7 @@ const port = process.env.PORT || 5000
 const cors = require("cors")
 require("dotenv").config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 
 app.use(cors())
 app.use(express.json())
@@ -22,6 +23,8 @@ async function run() {
         await client.connect()
         const productCollection = client.db("RaceTimeTools").collection("products");
         const userCollection = client.db("RaceTimeTools").collection("users");
+        const orderCollection = client.db("RaceTimeTools").collection("orders");
+
 
         app.get("/products", async (req, res) => {
             const query = {}
@@ -46,6 +49,13 @@ async function run() {
                 }
             }
             const result = await userCollection.updateOne(filter, doc, options)
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
+            res.send({ result, token })
+        })
+
+        app.post("/order", async (req, res) => {
+            const order = req.body
+            const result = await orderCollection.insertOne(order)
             res.send(result)
         })
 
