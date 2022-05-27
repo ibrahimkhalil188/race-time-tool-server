@@ -64,6 +64,7 @@ async function run() {
             const options = { upsert: true };
             const doc = {
                 $set: {
+                    name: user.name,
                     email: user.email,
                     bio: user.bio,
                     address: user.address,
@@ -77,10 +78,33 @@ async function run() {
             res.send({ result, token })
         })
 
+        app.put('/user/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const updateDoc = {
+                $set: { role: 'admin' },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+        app.get("/user", async (req, res) => {
+            const query = {}
+            const result = await userCollection.find(query).toArray()
+            res.send(result)
+        })
+
         app.get("/user/:email", async (req, res) => {
             const email = req.params.email
             const query = { email: email }
             const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+
+        app.delete("/user/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await userCollection.deleteOne(query)
             res.send(result)
         })
 
@@ -96,7 +120,6 @@ async function run() {
         app.get("/order", async (req, res) => {
             const email = req.query.email
             const query = { email: email }
-            console.log(query)
             const result = await orderCollection.find(query).toArray()
             res.send(result)
         })
