@@ -24,6 +24,7 @@ async function run() {
         const productCollection = client.db("RaceTimeTools").collection("products");
         const userCollection = client.db("RaceTimeTools").collection("users");
         const orderCollection = client.db("RaceTimeTools").collection("orders");
+        const reviewCollection = client.db("RaceTimeTools").collection("reviews");
 
 
         app.get("/products", async (req, res) => {
@@ -55,18 +56,34 @@ async function run() {
             const result = await productCollection.findOne(query)
             res.send(result)
         })
+
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email
             const filter = { email: email }
             const user = req.body
             const options = { upsert: true };
             const doc = {
-                $set: user
+                $set: {
+                    email: user.email,
+                    bio: user.bio,
+                    address: user.address,
+                    institute: user.institute,
+                    dateOfBirth: user.dateOfBirth,
+                    phone: user.phone
+                }
             }
             const result = await userCollection.updateOne(filter, doc, options)
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
             res.send({ result, token })
         })
+
+        app.get("/user/:email", async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+
 
         app.get("/order/:id", async (req, res) => {
             const id = req.params.id
@@ -97,6 +114,19 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await orderCollection.deleteOne(query)
             res.send(result)
+        })
+
+        app.post("/reviews", async (req, res) => {
+            const review = req.body
+            const result = await reviewCollection.insertOne(review)
+            res.send(result)
+        })
+
+        app.get("/reviews", async (req, res) => {
+            const query = {}
+            const result = await reviewCollection.find(query).toArray()
+            const sort = result.reverse()
+            res.send(sort)
         })
 
     }
