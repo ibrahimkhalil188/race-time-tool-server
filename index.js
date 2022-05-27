@@ -30,7 +30,21 @@ async function run() {
         app.get("/products", async (req, res) => {
             const query = {}
             const cursor = productCollection.find(query)
-            const result = await cursor.toArray()
+            const products = await cursor.toArray()
+            const result = products.reverse().slice(0, 6)
+            res.send(result)
+        })
+        app.get("/allproducts", async (req, res) => {
+            const query = {}
+            const cursor = productCollection.find(query)
+            const products = await cursor.toArray()
+            const result = products.reverse()
+            res.send(result)
+        })
+
+        app.post("/products", async (req, res) => {
+            const product = req.body
+            const result = await productCollection.insertOne(product)
             res.send(result)
         })
 
@@ -54,6 +68,14 @@ async function run() {
             const id = req.params.id
             const query = ObjectId(id)
             const result = await productCollection.findOne(query)
+            res.send(result)
+        })
+
+
+        app.delete("/allproducts/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(query)
             res.send(result)
         })
 
@@ -120,9 +142,21 @@ async function run() {
         app.get("/order", async (req, res) => {
             const email = req.query.email
             const query = { email: email }
+
             const result = await orderCollection.find(query).toArray()
             res.send(result)
+
         })
+        app.get("/allorder", async (req, res) => {
+            const email = req.query.email
+            const query = {}
+
+            const result = await orderCollection.find(query).toArray()
+            res.send(result)
+
+        })
+
+
 
 
         app.post("/order", async (req, res) => {
