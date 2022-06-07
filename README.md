@@ -5,7 +5,7 @@
 
 
 
-Open [https://mobile-land.netlify.app/](https://race-time-tools.web.app/) to view it in your browser.
+Open [https://race-time-tools.web.app/](https://race-time-tools.web.app/) to view it in your browser.
 
 
 ## Feature of this website
