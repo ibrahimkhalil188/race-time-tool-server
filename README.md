@@ -10,6 +10,15 @@ Open [https://mobile-land.netlify.app/](https://race-time-tools.web.app/) to vie
 
 ## Feature of this website
 
+* Login users can purchase products, make payments, see order status, give a review, and
+update their profile.
+
+* Admin can add, delete and update products. Delete user and delivered product if paid and
+delete order if not paid.
+
+* Admin specific route is not available for users and the users-specific route is not available
+for admin
+
 * Landing page with navbar,heroSection,services,business summery,review,footer.
 
 * login and registration page have one form to login or registration and a social login.
